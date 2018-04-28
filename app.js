@@ -15,6 +15,10 @@ app.use(express.static('public'));
 app.set('view-engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
+app.get('/', (req,res)=>{
+    res.sendFile(__dirname + '/views/index.html');
+})
+
 app.get("/api/latest/imageSearch", (req, res) => {
     urlModel.find({}).exec((err, url) => {
         if (err) throw err;
@@ -33,9 +37,9 @@ app.get("/api/latest/imageSearch", (req, res) => {
 
 app.get("/api/imageSearch/:search", (req, res) => {
     let imgObj = {};
-    let pages = {}
-    if (req.query.pages) pages.page = Number(req.query.pages);
-    client.search(req.params.search, pages).then(images => {
+    let page = {}
+    if (req.query.page) page.page = Number(req.query.page);
+    client.search(req.params.search, page).then(images => {
         const refinedImg = images.map(image => {
             imgObj = {
                 url: image.url,
